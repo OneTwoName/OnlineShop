@@ -69,6 +69,7 @@ class App extends React.Component {
             ],
             itemsCopy: [],
             showFullItem: false,
+            fullItem: {},
         }
         this.state.itemsCopy = this.state.items
         this.addItem = this.addItem.bind(this)
@@ -84,7 +85,7 @@ class App extends React.Component {
                 <Categories chooseCategory = {this.filterItem}/>
                 <Items onShowItem={this.onShowItem} onAddItem = {this.addItem} items = {this.state.itemsCopy}/>
 
-                {this.state.showFullItem && <ShowFullItem/>}
+                {this.state.showFullItem && <ShowFullItem onShowItem={this.onShowItem} onAddItem = {this.addItem} item = {this.state.fullItem} />}
                 <Footer/>
             </div>
         )
@@ -106,7 +107,21 @@ class App extends React.Component {
             });
 
             this.setState({ items: updatedItems });
-            
+            // this.setState({ fullItem: updatedItems.forEach(el => {
+            //     const itemsFind = updatedItems.find(it => it.id === el.id)
+            //     if(itemsFind){
+            //         return itemsFind
+            //     }
+            // }) });
+            console.log(this.state.fullItem)
+            this.setState({ itemsCopy: this.state.itemsCopy.map((elCopy) => {
+                const itemsFind = updatedItems.find(item => item.id === elCopy.id)
+                if(itemsFind){
+                    return itemsFind
+                }
+                return elCopy
+            }) });
+
             this.setState({
                 orders: [...this.state.orders, item]
             })
@@ -124,6 +139,13 @@ class App extends React.Component {
         });
 
         this.setState({ items: updatedItems });
+        this.setState({ itemsCopy: this.state.itemsCopy.map((elCopy) => {
+            const itemsFind = updatedItems.find(item => item.id === elCopy.id)
+            if(itemsFind){
+                return itemsFind
+            }
+            return elCopy
+        }) });
 
         this.setState({
             orders: this.state.orders.filter((el) => el.id !== item.id)
@@ -146,7 +168,8 @@ class App extends React.Component {
         }
     }
 
-    onShowItem(){
+    onShowItem(item){
+        this.setState({fullItem: item})
         this.setState({showFullItem: !this.state.showFullItem})
     }
 
